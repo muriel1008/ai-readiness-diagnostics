@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Organizational Maturity | GIE Framework</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #f5f5f7;
+  --bg-card: #ffffff;
+  --bg-hover: #f0f0f5;
+  --border: #e2e2ea;
+  --text: #1a1a2e;
+  --text-dim: #555568;
+  --text-muted: #999aab;
+  --accent: #4a6cf7;
+  --accent-glow: rgba(74,108,247,0.08);
+  --gov: #4a6cf7;
+  --infra: #00b894;
+  --effi: #f59e0b;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(74,108,247,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,108,247,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.screen { display: none; animation: fadeIn 0.5s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── INTRO ─── */
+.intro-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(74,108,247,0.2);
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.intro-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.intro-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
+}
+
+.intro-title span {
+  background: linear-gradient(135deg, var(--gov) 0%, var(--infra) 50%, var(--effi) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.intro-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+
+.intro-note {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding: 12px 16px;
+  background: var(--accent-glow);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 40px;
+}
+
+.gie-pills {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.gie-pill {
+  flex: 1;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.gie-pill .pill-letter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.gie-pill .pill-name {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gie-pill .pill-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.pill-G .pill-letter { color: var(--gov); }
+.pill-I .pill-letter { color: var(--infra); }
+.pill-E .pill-letter { color: var(--effi); }
+
+/* ─── FORM ─── */
+.form-group { margin-bottom: 20px; }
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-input::placeholder { color: var(--text-muted); }
+
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(74,108,247,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(74,108,247,0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-hover);
+}
+
+/* ─── DIMENSION SECTION ─── */
+.dim-section {
+  margin-bottom: 40px;
+  animation: fadeIn 0.5s ease;
+}
+
+.dim-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.dim-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dim-tag-G { background: rgba(74,108,247,0.1); color: var(--gov); }
+.dim-tag-I { background: rgba(0,184,148,0.1); color: var(--infra); }
+.dim-tag-E { background: rgba(245,158,11,0.1); color: var(--effi); }
+
+.dim-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.dim-question {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.level-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.level-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+}
+
+.level-option:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.level-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+  box-shadow: 0 0 0 3px rgba(74,108,247,0.08);
+}
+
+.level-marker {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.level-option.selected .level-marker {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.level-content { flex: 1; }
+
+.level-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.level-desc {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.level-option.selected .level-name { color: var(--text); }
+.level-option.selected .level-desc { color: var(--text-dim); }
+
+/* ─── PROGRESS ─── */
+.progress-steps {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.progress-step {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.4s;
+}
+
+.progress-step.done { background: var(--accent); }
+.progress-step.active { background: var(--accent); opacity: 0.5; }
+
+/* ─── RESULTS ─── */
+.results-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.result-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(74,108,247,0.2);
+  color: var(--accent);
+}
+
+.results-header h2 {
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.results-header p {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.gie-results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.gie-result-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.gie-result-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.gie-result-card.card-G::before { background: var(--gov); }
+.gie-result-card.card-I::before { background: var(--infra); }
+.gie-result-card.card-E::before { background: var(--effi); }
+
+.gie-result-card .card-dim {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.gie-result-card.card-G .card-dim { color: var(--gov); }
+.gie-result-card.card-I .card-dim { color: var(--infra); }
+.gie-result-card.card-E .card-dim { color: var(--effi); }
+
+.gie-result-card .card-level {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.gie-result-card .card-name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.gie-result-card .card-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Mismatch */
+.mismatch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.mismatch-card h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.mismatch-card p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-dim);
+}
+
+.mismatch-card .tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.tag-warning { background: rgba(245,158,11,0.1); color: var(--effi); }
+.tag-ok { background: rgba(0,184,148,0.1); color: var(--infra); }
+
+.result-next {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.result-next h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.result-next ul {
+  padding-left: 20px;
+}
+
+.result-next li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.results-footer {
+  text-align: center;
+  padding-top: 16px;
+}
+
+.results-footer p {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+.credit {
+  text-align: center;
+  padding: 40px 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+.credit a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 640px) {
+  .container { padding: 24px 16px; }
+  .gie-pills { flex-direction: column; }
+  .gie-results-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ INTRO ═══ -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-badge">Organizational Assessment</div>
+    <h1 class="intro-title">
+      Tổ chức bạn đang ở<br>
+      <span>mức độ AI</span> nào?
+    </h1>
+    <p class="intro-desc">
+      Đánh giá mức độ trưởng thành AI của tổ chức theo framework GIE — Governance, Infrastructure, Efficacy. Chọn mô tả phù hợp nhất với phòng ban/bộ phận của bạn.
+    </p>
+    <div class="intro-note">
+      <strong>Lưu ý:</strong> Đánh giá theo thực tế phòng ban/bộ phận của bạn, không phải toàn công ty. Mức trưởng thành tổng thể = dimension có điểm thấp nhất (sàn quan trọng hơn trung bình).
+    </div>
+
+    <div class="gie-pills">
+      <div class="gie-pill pill-G">
+        <div class="pill-letter">G</div>
+        <div class="pill-name">Governance</div>
+        <div class="pill-desc">Ai chịu trách nhiệm?</div>
+      </div>
+      <div class="gie-pill pill-I">
+        <div class="pill-letter">I</div>
+        <div class="pill-name">Infrastructure</div>
+        <div class="pill-desc">Nền tảng kỹ thuật?</div>
+      </div>
+      <div class="gie-pill pill-E">
+        <div class="pill-letter">E</div>
+        <div class="pill-name">Efficacy</div>
+        <div class="pill-desc">Có kết quả thực?</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Họ và tên</label>
+      <input class="form-input" type="text" id="inp-name" placeholder="Nguyễn Văn A">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="inp-email" placeholder="email@fpt.com.vn">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phòng ban / Bộ phận</label>
+      <input class="form-input" type="text" id="inp-dept" placeholder="VD: Technology, HR, Sales...">
+    </div>
+
+    <button class="btn btn-primary" onclick="startAssessment()">
+      Bắt đầu đánh giá
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- ═══ ASSESSMENT ═══ -->
+  <div class="screen" id="screen-assess">
+    <div class="progress-steps" id="progress-steps">
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    <div id="assess-container"></div>
+    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:16px;">
+      <button class="btn btn-primary" id="btn-next" onclick="nextDimension()" disabled>
+        Tiếp theo
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <div class="screen" id="screen-results">
+    <div class="results-header">
+      <div class="result-level-badge" id="result-badge"></div>
+      <h2 id="result-title"></h2>
+      <p id="result-subtitle"></p>
+    </div>
+    <div class="gie-results-grid" id="gie-grid"></div>
+    <div id="mismatch-container"></div>
+    <div class="result-next" id="result-next"></div>
+    <div class="results-footer">
+      <button class="btn btn-secondary" onclick="restart()">Làm lại</button>
+      <p>Kết quả đã được ghi nhận. Cảm ơn bạn đã tham gia.</p>
+    </div>
+  </div>
+
+  <div class="credit">
+    GIE Framework &copy; Tim Tran &mdash; <a href="https://linkedin.com/in/timqtran" target="_blank">The Operationalizer</a>
+  </div>
+
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = '';
+
+const DIMENSIONS = [
+  {
+    key: 'G',
+    tag: 'Governance',
+    question: 'Chọn mô tả phù hợp nhất với cách phòng ban bạn quản lý việc sử dụng AI:',
+    options: [
+      {
+        level: 1, name: 'Shadow AI',
+        desc: 'Chưa có chính sách AI rõ ràng. Nhân viên tự dùng tài khoản cá nhân (ChatGPT, Gemini...). Không ai biết ai đang dùng gì, với dữ liệu nào. Nếu có sự cố rò rỉ dữ liệu, không rõ ai chịu trách nhiệm.'
+      },
+      {
+        level: 2, name: 'Guarded AI',
+        desc: 'Đã có chính sách sử dụng AI (AI Use Policy). Nhân viên dùng qua kênh chính thức của công ty (ví dụ: Azure OpenAI, Copilot). Dữ liệu không bị dùng để train model. Có quy định rõ những gì được và không được chia sẻ với AI.'
+      },
+      {
+        level: 3, name: 'Contextual AI',
+        desc: 'Có phân quyền truy cập dữ liệu cho AI (Role-Based Access Control). AI chỉ "thấy" những tài liệu mà người dùng đó được phép truy cập. Có quy trình duyệt trước khi kết nối nguồn dữ liệu mới.'
+      },
+      {
+        level: 4, name: 'Agentic AI',
+        desc: 'AI được phép thực hiện hành động (gửi email, cập nhật CRM, tạo task...) nhưng có audit trail ghi lại mọi hành động. Có checkpoint "human-in-the-loop" cho các quyết định quan trọng. Rõ ràng ai chịu trách nhiệm khi agent hành động sai.'
+      },
+      {
+        level: 5, name: 'AI-First Ops',
+        desc: 'Output của AI được kiểm tra bởi AI khác trước khi đến khách hàng hoặc người ra quyết định (LLM-as-a-Judge). Có giới hạn chi phí và an toàn tự động (cost caps, safety guardrails). Quy trình escalation rõ ràng khi AI vượt ngưỡng.'
+      }
+    ]
+  },
+  {
+    key: 'I',
+    tag: 'Infrastructure',
+    question: 'Chọn mô tả phù hợp nhất với nền tảng kỹ thuật AI tại phòng ban bạn:',
+    options: [
+      {
+        level: 1, name: 'Consumer Tools',
+        desc: 'Nhân viên dùng các công cụ AI miễn phí/cá nhân (ChatGPT free, Gemini, Claude). Không có tích hợp với hệ thống nội bộ. AI không truy cập được dữ liệu công ty — phải copy-paste thủ công.'
+      },
+      {
+        level: 2, name: 'Enterprise Access',
+        desc: 'Có tài khoản enterprise (Azure OpenAI, Copilot, Claude for Teams). Đăng nhập SSO. Dữ liệu không bị dùng để train model. Nhưng AI vẫn chỉ biết kiến thức chung — chưa biết gì về công ty, quy trình, hay dữ liệu nội bộ.'
+      },
+      {
+        level: 3, name: 'Connected to Company Data',
+        desc: 'AI được kết nối với dữ liệu nội bộ (SharePoint, wiki, CRM, SOPs, hợp đồng). AI trả lời dựa trên tài liệu công ty, không chỉ kiến thức chung. Có thể search và reference tài liệu cụ thể. Nhưng AI chỉ "đọc" và "trả lời" — chưa tự hành động.'
+      },
+      {
+        level: 4, name: 'AI Takes Actions',
+        desc: 'AI có thể thực hiện hành động: gửi email, cập nhật CRM, tạo ticket, trigger approval workflow. Có kết nối API/webhook với hệ thống nội bộ. Agentic workflows chạy multi-step tasks. Nhưng mỗi agent hoạt động riêng lẻ — chưa phối hợp với nhau.'
+      },
+      {
+        level: 5, name: 'AI Workflows as Software',
+        desc: 'AI workflows được version control, test, và monitor như phần mềm. Có CI/CD cho prompt/agent logic — thay đổi prompt được test trước khi deploy. Có observability: theo dõi chi phí, chất lượng, latency, drift theo thời gian thực. Nhiều agent phối hợp qua orchestration layer.'
+      }
+    ]
+  },
+  {
+    key: 'E',
+    tag: 'Efficacy',
+    question: 'Chọn mô tả phù hợp nhất với kết quả thực tế mà AI đang mang lại cho phòng ban bạn:',
+    options: [
+      {
+        level: 1, name: 'Không đo được',
+        desc: 'Một số người dùng AI nhưng không ai đo lường kết quả. Không biết AI đang tiết kiệm bao nhiêu thời gian hay tạo thêm bao nhiêu giá trị. Nếu hỏi "AI có hiệu quả không?", câu trả lời là "có lẽ" hoặc "mình nghĩ là có."'
+      },
+      {
+        level: 2, name: 'Adoption metrics',
+        desc: 'Biết bao nhiêu người đang dùng AI (adoption rate). Có thể đo số lượng queries hoặc sessions. Nhưng chưa kết nối được con số sử dụng với kết quả kinh doanh cụ thể. Biết "người ta dùng" nhưng chưa biết "dùng có hiệu quả không."'
+      },
+      {
+        level: 3, name: 'Productivity gains',
+        desc: 'Có bằng chứng cụ thể AI tiết kiệm thời gian cho một số task (ví dụ: viết báo cáo giảm từ 3 giờ xuống 1 giờ). Một vài team có case study thành công. Nhưng chưa đo được tổng ROI ở cấp phòng ban — đo lường vẫn ở mức anecdotal, chưa systematic.'
+      },
+      {
+        level: 4, name: 'Business outcome tracking',
+        desc: 'Đo lường ROI theo business outcome, không chỉ productivity: doanh thu tăng, chi phí giảm, chất lượng output cải thiện, thời gian xử lý rút ngắn. Có dashboard theo dõi. Cost-to-value ratio rõ ràng cho từng AI use case. Có thể justify budget AI bằng số liệu.'
+      },
+      {
+        level: 5, name: 'Continuous optimization',
+        desc: 'AI systems tự cải tiến dựa trên feedback loop: đo → phân tích → điều chỉnh → đo lại. Có monitoring cho quality drift (output xấu dần theo thời gian). Cost per unit of output được optimize liên tục. AI không chỉ "chạy" — nó đang "tốt lên."'
+      }
+    ]
+  }
+];
+
+const LEVEL_NAMES = {
+  1: { name: 'Shadow AI', subtitle: 'Rủi ro — chưa kiểm soát' },
+  2: { name: 'Guarded AI', subtitle: 'An toàn — nhưng chưa thông minh' },
+  3: { name: 'Contextual AI', subtitle: 'AI hiểu business — nhưng chưa hành động' },
+  4: { name: 'Agentic AI', subtitle: 'AI hành động — nhưng chưa phối hợp' },
+  5: { name: 'AI-First Ops', subtitle: 'AI vận hành — tự cải tiến' }
+};
+
+let state = {
+  name: '', email: '', dept: '',
+  currentDim: 0,
+  scores: { G: 0, I: 0, E: 0 },
+  selected: { G: -1, I: -1, E: -1 }
+};
+
+function startAssessment() {
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  if (!name || !email) { alert('Vui lòng nhập họ tên và email.'); return; }
+  state.name = name;
+  state.email = email;
+  state.dept = document.getElementById('inp-dept').value.trim();
+  state.currentDim = 0;
+  showScreen('screen-assess');
+  renderDimension();
+}
+
+function renderDimension() {
+  const dim = DIMENSIONS[state.currentDim];
+  const dimKey = dim.key;
+
+  // Update progress
+  document.querySelectorAll('.progress-step').forEach((s, i) => {
+    s.className = 'progress-step';
+    if (i < state.currentDim) s.classList.add('done');
+    else if (i === state.currentDim) s.classList.add('active');
+  });
+
+  const tagClass = `dim-tag-${dimKey}`;
+  const container = document.getElementById('assess-container');
+  container.innerHTML = `
+    <div class="dim-section">
+      <div class="dim-header">
+        <span class="dim-tag ${tagClass}">${dim.tag}</span>
+      </div>
+      <p class="dim-question">${dim.question}</p>
+      <div class="level-options">
+        ${dim.options.map((opt, i) => `
+          <div class="level-option" onclick="selectLevel('${dimKey}', ${opt.level}, ${i})">
+            <div class="level-marker">L${opt.level}</div>
+            <div class="level-content">
+              <div class="level-name">${opt.name}</div>
+              <div class="level-desc">${opt.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-next').disabled = true;
+  document.getElementById('btn-next').textContent = state.currentDim < 2 ? 'Tiếp theo' : 'Xem kết quả';
+
+  // Restore selection
+  if (state.selected[dimKey] >= 0) {
+    const opts = document.querySelectorAll('.level-option');
+    opts[state.selected[dimKey]].classList.add('selected');
+    document.getElementById('btn-next').disabled = false;
+  }
+}
+
+function selectLevel(dimKey, level, index) {
+  state.scores[dimKey] = level;
+  state.selected[dimKey] = index;
+
+  document.querySelectorAll('.level-option').forEach((opt, i) => {
+    opt.classList.toggle('selected', i === index);
+  });
+
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextDimension() {
+  state.currentDim++;
+  if (state.currentDim >= 3) {
+    showResults();
+  } else {
+    renderDimension();
+  }
+}
+
+function showResults() {
+  const G = state.scores.G;
+  const I = state.scores.I;
+  const E = state.scores.E;
+  const overall = Math.min(G, I, E);
+  const lvl = LEVEL_NAMES[overall];
+
+  // Badge
+  document.getElementById('result-badge').textContent = `LEVEL ${overall} — ${lvl.name.toUpperCase()}`;
+  document.getElementById('result-title').textContent = lvl.name;
+  document.getElementById('result-subtitle').textContent = lvl.subtitle;
+
+  // GIE cards
+  const dims = [
+    { key: 'G', label: 'Governance', level: G, cls: 'card-G' },
+    { key: 'I', label: 'Infrastructure', level: I, cls: 'card-I' },
+    { key: 'E', label: 'Efficacy', level: E, cls: 'card-E' }
+  ];
+
+  document.getElementById('gie-grid').innerHTML = dims.map(d => `
+    <div class="gie-result-card ${d.cls}">
+      <div class="card-dim">${d.label}</div>
+      <div class="card-level">L${d.level}</div>
+      <div class="card-name">${LEVEL_NAMES[d.level].name}</div>
+    </div>
+  `).join('');
+
+  // Mismatch analysis
+  const maxDim = Math.max(G, I, E);
+  const minDim = Math.min(G, I, E);
+  const gap = maxDim - minDim;
+
+  let mismatchHTML = '';
+  if (gap >= 2) {
+    const highDims = dims.filter(d => d.level === maxDim).map(d => d.label).join(', ');
+    const lowDims = dims.filter(d => d.level === minDim).map(d => d.label).join(', ');
+    mismatchHTML = `
+      <div class="mismatch-card">
+        <span class="tag tag-warning">MISMATCH DETECTED</span>
+        <h4>Khoảng cách ${gap} cấp độ giữa ${highDims} (L${maxDim}) và ${lowDims} (L${minDim})</h4>
+        <p>${getMismatchAdvice(G, I, E)}</p>
+      </div>
+    `;
+  } else {
+    mismatchHTML = `
+      <div class="mismatch-card">
+        <span class="tag tag-ok">BALANCED</span>
+        <h4>Các dimension phát triển cân đối</h4>
+        <p>Khoảng cách giữa G, I, E ≤ 1 cấp độ. Đây là trạng thái lành mạnh — tổ chức có thể tiến lên cấp tiếp theo mà không bị mất cân bằng.</p>
+      </div>
+    `;
+  }
+  document.getElementById('mismatch-container').innerHTML = mismatchHTML;
+
+  // Next steps
+  document.getElementById('result-next').innerHTML = `
+    <h4>Bước tiếp theo để lên Level ${Math.min(overall + 1, 5)}</h4>
+    <ul>${getNextSteps(overall).map(s => `<li>${s}</li>`).join('')}</ul>
+  `;
+
+  showScreen('screen-results');
+  submitResults(G, I, E, overall);
+}
+
+function getMismatchAdvice(G, I, E) {
+  if (I > G + 1) return 'Infrastructure vượt xa Governance. Rủi ro: công cụ AI mạnh nhưng chưa có kiểm soát đủ. Ưu tiên: xây dựng chính sách, phân quyền, và audit trail trước khi mở rộng thêm.';
+  if (G > I + 1) return 'Governance vượt xa Infrastructure. Chính sách đầy đủ nhưng công cụ chưa theo kịp. Ưu tiên: đầu tư nền tảng kỹ thuật — kết nối dữ liệu, enterprise access, hoặc agentic capabilities tùy mức hiện tại.';
+  if (I > E + 1) return 'Infrastructure vượt xa Efficacy. Đã đầu tư công cụ nhưng chưa đo được kết quả. Ưu tiên: xây dựng measurement framework — từ adoption metrics đến business outcome tracking.';
+  if (E > I + 1) return 'Efficacy vượt xa Infrastructure. Đang đo lường tốt nhưng nền tảng chưa đủ mạnh. Ưu tiên: nâng cấp infrastructure để unlock thêm use cases có ROI cao.';
+  if (G > E + 1) return 'Governance vượt xa Efficacy. Chính sách chặt chẽ nhưng chưa chứng minh được giá trị. Ưu tiên: chọn 2-3 use cases, đo ROI cụ thể, dùng data để justify tiếp tục đầu tư.';
+  if (E > G + 1) return 'Efficacy vượt xa Governance. Có kết quả nhưng chưa quản lý được rủi ro. Ưu tiên: xây dựng chính sách và audit trail trước khi scale — kết quả tốt không bù được sự cố dữ liệu.';
+  return 'Có khoảng cách đáng kể giữa các dimension. Ưu tiên nâng dimension thấp nhất lên trước khi mở rộng dimension cao nhất.';
+}
+
+function getNextSteps(level) {
+  const steps = {
+    1: [
+      'Xây dựng AI Use Policy: quy định rõ ai được dùng AI, với dữ liệu nào, qua kênh nào',
+      'Triển khai enterprise AI access (Azure OpenAI, Copilot, hoặc Claude for Teams) để thay thế tài khoản cá nhân',
+      'Đo adoption: bao nhiêu người đang dùng, dùng bao nhiêu, cho việc gì'
+    ],
+    2: [
+      'Kết nối AI với dữ liệu nội bộ (SharePoint, CRM, SOPs) — AI cần "biết" về công ty để hữu ích',
+      'Thiết lập phân quyền truy cập dữ liệu cho AI (RBAC) — không phải ai cũng nên thấy mọi thứ',
+      'Chọn 3 use cases cụ thể, đo thời gian tiết kiệm trước và sau khi dùng AI'
+    ],
+    3: [
+      'Pilot 1-2 agentic workflows: AI thực hiện hành động (gửi email, cập nhật hệ thống) với human approval',
+      'Xây dựng audit trail cho AI actions — ghi lại mọi hành động AI thực hiện',
+      'Thiết lập business outcome metrics: không chỉ "tiết kiệm thời gian" mà ROI bằng tiền, chất lượng, tốc độ'
+    ],
+    4: [
+      'Orchestrate nhiều agents: từ agent riêng lẻ sang hệ thống phối hợp (PDCA harness)',
+      'Xây dựng AI-checks-AI layer: output được verify tự động trước khi đến người dùng cuối',
+      'CI/CD cho prompt/agent: version control, regression test, monitoring dashboard'
+    ],
+    5: [
+      'Scale pattern sang department khác: modular architecture cho phép nhân rộng nhanh',
+      'Continuous optimization: feedback loop tự động (đo → phân tích → điều chỉnh → đo lại)',
+      'Xây dựng internal AI capability team — giảm phụ thuộc vendor, tăng tốc độ iteration'
+    ]
+  };
+  return steps[Math.min(level, 5)] || steps[5];
+}
+
+function submitResults(G, I, E, overall) {
+  if (!GOOGLE_SCRIPT_URL) {
+    console.log('GIE Results:', { name: state.name, email: state.email, dept: state.dept, G, I, E, overall });
+    return;
+  }
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      timestamp: new Date().toISOString(),
+      name: state.name, email: state.email, department: state.dept,
+      gScore: G, iScore: I, eScore: E, overallLevel: overall,
+      overallName: LEVEL_NAMES[overall].name
+    })
+  }).catch(err => console.log('Submit error:', err));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  state = { name: '', email: '', dept: '', currentDim: 0, scores: { G: 0, I: 0, E: 0 }, selected: { G: -1, I: -1, E: -1 } };
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-email').value = '';
+  document.getElementById('inp-dept').value = '';
+  showScreen('screen-intro');
+}
+</script>
+
+</body>
+</html>
